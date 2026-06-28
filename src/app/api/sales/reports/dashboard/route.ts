@@ -151,7 +151,7 @@ export async function GET() {
 
   // Process quotation funnel
   const qf: Record<string, number> = {};
-  for (const row of quotationFunnel.rows as any[]) qf[row.status] = Number(row.count);
+  for (const row of quotationFunnel as any[]) qf[row.status] = Number(row.count);
   const totalQ = Object.values(qf).reduce((s, v) => s + v, 0);
   const wonQ = qf['accepted'] ?? 0;
   const lostQ = qf['rejected'] ?? 0;
@@ -161,7 +161,7 @@ export async function GET() {
   const revPrev = parseFloat(revenuePrevMtd[0]?.total ?? '0');
   const revGrowth = revPrev > 0 ? ((revMtd - revPrev) / revPrev) * 100 : null;
 
-  const aging = (agingData.rows as any[])[0] ?? {};
+  const aging = (agingData as any[])[0] ?? {};
 
   return NextResponse.json({
     pipeline: {
@@ -181,12 +181,12 @@ export async function GET() {
       overdueAmount: parseFloat(overdueData[0]?.total ?? '0'),
       overdueCount: Number(overdueData[0]?.count ?? 0),
     },
-    monthlyRevenue: (monthlyRevenue.rows as any[]).map((r) => ({
+    monthlyRevenue: (monthlyRevenue as any[]).map((r) => ({
       month: r.month,
       revenue: parseFloat(r.revenue),
       tax: parseFloat(r.tax),
     })),
-    topCustomers: (topCustomers.rows as any[]).map((r) => ({
+    topCustomers: (topCustomers as any[]).map((r) => ({
       name: r.customer_name ?? 'Unknown',
       revenue: parseFloat(r.revenue),
       invoices: Number(r.invoice_count),

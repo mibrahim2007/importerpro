@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
     ORDER BY si.invoice_date DESC, si.invoice_no, sil.sort_order
   `);
 
-  const lines = rows.rows as any[];
+  const lines = rows as any[];
 
   // Aggregate totals
   const uniqueInvoiceIds = new Set(lines.map((r) => r.invoice_id));

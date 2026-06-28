@@ -88,12 +88,12 @@ export default async function SalesDashboardPage() {
   ]);
 
   const qf: Record<string, number> = {};
-  for (const row of quotationFunnel.rows as any[]) qf[row.status] = Number(row.count);
+  for (const row of quotationFunnel as any[]) qf[row.status] = Number(row.count);
   const wonQ = qf['accepted'] ?? 0;
   const lostQ = qf['rejected'] ?? 0;
   const winRate = (wonQ + lostQ) > 0 ? Math.round((wonQ / (wonQ + lostQ)) * 1000) / 10 : 0;
 
-  const ag = (agingData.rows as any[])[0] ?? {};
+  const ag = (agingData as any[])[0] ?? {};
 
   const data = {
     pipeline: {
@@ -111,11 +111,11 @@ export default async function SalesDashboardPage() {
       overdueAmount: parseFloat(overdueData[0]?.total ?? '0'),
       overdueCount: overdueData[0]?.count ?? 0,
     },
-    monthlyRevenue: (monthlyRevenue.rows as any[]).map((r) => ({
+    monthlyRevenue: (monthlyRevenue as any[]).map((r) => ({
       month: r.month as string,
       revenue: parseFloat(r.revenue),
     })),
-    topCustomers: (topCustomers.rows as any[]).map((r) => ({
+    topCustomers: (topCustomers as any[]).map((r) => ({
       name: (r.customer_name as string) ?? 'Unknown',
       revenue: parseFloat(r.revenue),
     })),

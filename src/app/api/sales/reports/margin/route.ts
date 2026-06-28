@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
     ORDER BY total_revenue DESC
   `);
 
-  const products = (rows.rows as any[]).map((r) => {
+  const products = (rows as any[]).map((r) => {
     const revenue = parseFloat(r.total_revenue ?? '0');
     const qty = parseFloat(r.total_qty_sold ?? '0');
     const avgSell = parseFloat(r.avg_selling_price ?? '0');

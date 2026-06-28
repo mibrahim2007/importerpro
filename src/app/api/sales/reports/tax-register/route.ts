@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
     ORDER BY sil.sales_tax_pct DESC, taxable_value DESC
   `);
 
-  const lines = rows.rows as any[];
+  const lines = rows as any[];
 
   // Summary by tax rate
   const byRate: Record<string, { taxableValue: number; salesTax: number }> = {};
