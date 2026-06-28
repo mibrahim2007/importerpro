@@ -25,7 +25,7 @@ export default async function SystemHealthPage() {
   ];
 
   const dbOk = dbLatency < 500;
-  const dbVersionStr = (dbVersion.rows?.[0] as { version: string })?.version ?? 'Unknown';
+  const dbVersionStr = (dbVersion[0] as { version?: string })?.version ?? 'Unknown';
 
   const checks = [
     { name: 'PostgreSQL Connection', ok: true, detail: dbVersionStr.split(' ').slice(0, 2).join(' ') },
