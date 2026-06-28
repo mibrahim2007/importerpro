@@ -13,8 +13,8 @@ const globalForDb = globalThis as unknown as {
 const client =
   globalForDb.client ??
   postgres(connectionString, {
-    max: 5,
-    idle_timeout: 20,
+    max: 1,
+    idle_timeout: 10,
     connect_timeout: 10,
   });
 
@@ -33,8 +33,8 @@ export function getTenantDb(tenantSlug: string) {
   const schemaName = `tenant_${tenantSlug.replace(/-/g, '_')}`;
   if (tenantDbCache.has(schemaName)) return tenantDbCache.get(schemaName)!;
   const tenantClient = postgres(connectionString, {
-    max: 2,
-    idle_timeout: 20,
+    max: 1,
+    idle_timeout: 10,
     connect_timeout: 10,
     connection: { search_path: `${schemaName},public` },
   });
