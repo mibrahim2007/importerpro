@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth/config';
 import { getTenantDb } from '@/db';
-import { salesQuotations, salesQuotationLines, customers, products } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { salesQuotations, salesQuotationLines, customers, products, tenantSettings } from '@/db/schema';
+import { eq, inArray } from 'drizzle-orm';
 import { notFound, redirect } from 'next/navigation';
 import { PrintButton } from '@/components/sales/print-button';
 
@@ -19,7 +19,9 @@ export default async function QuotationPrintPage({ params }: { params: Promise<{
   const { id } = await params;
   const tdb = await getTenantDb(session.user.tenantSlug);
 
-  const [[qt], lines] = await Promise.all([
+  const SETTING_KEYS = ['company_name', 'company_ntn', 'company_strn', 'company_address', 'company_phone', 'company_email'];
+
+  const [[qt], lines, settingRows] = await Promise.all([
     tdb.select({
       id: salesQuotations.id, quotationNo: salesQuotations.quotationNo,
       revisionNo: salesQuotations.revisionNo,
@@ -49,7 +51,19 @@ export default async function QuotationPrintPage({ params }: { params: Promise<{
     .leftJoin(products, eq(products.id, salesQuotationLines.productId))
     .where(eq(salesQuotationLines.quotationId, id))
     .orderBy(salesQuotationLines.sortOrder),
+
+    tdb.select({ key: tenantSettings.key, value: tenantSettings.value })
+      .from(tenantSettings)
+      .where(inArray(tenantSettings.key, SETTING_KEYS)),
   ]);
+
+  const s = Object.fromEntries(settingRows.map((r) => [r.key, r.value ?? '']));
+  const companyName = s.company_name || 'MCL Chemicals Pvt Ltd';
+  const companyNtn  = s.company_ntn  || '';
+  const companyStrn = s.company_strn || '';
+  const companyAddress = s.company_address || '';
+  const companyPhone   = s.company_phone   || '';
+  const companyEmail   = s.company_email   || '';
 
   if (!qt) notFound();
   const grandTotal = parseFloat(qt.grandTotalPkr ?? '0');
@@ -64,9 +78,14 @@ export default async function QuotationPrintPage({ params }: { params: Promise<{
         {/* Letterhead */}
         <div className="flex justify-between items-start mb-8 pb-6 border-b-2 border-teal-600">
           <div>
-            <h1 className="text-2xl font-bold text-teal-700">IMPORTERPRO</h1>
-            <p className="text-sm text-slate-500">Your Company Name · City, Pakistan</p>
-            <p className="text-sm text-slate-500">NTN: 0000000-0 · STRN: 00-00-0000-000-00</p>
+            <h1 className="text-2xl font-bold text-teal-700">{companyName}</h1>
+            {companyAddress && <p className="text-sm text-slate-500">{companyAddress}</p>}
+            <div className="flex gap-3 text-sm text-slate-500 flex-wrap">
+              {companyNtn  && <span>NTN: {companyNtn}</span>}
+              {companyStrn && <span>STRN: {companyStrn}</span>}
+              {companyPhone && <span>Tel: {companyPhone}</span>}
+              {companyEmail && <span>{companyEmail}</span>}
+            </div>
           </div>
           <div className="text-right">
             <p className="text-3xl font-bold text-slate-800">QUOTATION</p>
@@ -158,7 +177,7 @@ export default async function QuotationPrintPage({ params }: { params: Promise<{
           <div>
             <div className="border-b border-slate-400 mb-2 pb-8"></div>
             <p className="text-slate-600">Authorized Signatory</p>
-            <p className="text-xs text-slate-400">ImporterPro</p>
+            <p className="text-xs text-slate-400">{companyName}</p>
           </div>
           <div>
             <div className="border-b border-slate-400 mb-2 pb-8"></div>
