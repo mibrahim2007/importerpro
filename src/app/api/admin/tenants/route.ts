@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth/config';
+﻿import { auth } from '@/lib/auth/config';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { tenants, users, tenantUsers } from '@/db/schema';
@@ -179,9 +179,9 @@ async function provisionTenantSchema(schemaName: string) {
         sort_order INTEGER DEFAULT 0
       );
 
-      CREATE TYPE IF NOT EXISTS inquiry_status AS ENUM ('new','quoted','won','lost','cancelled');
-      CREATE TYPE IF NOT EXISTS quotation_status AS ENUM ('draft','sent','accepted','rejected','revised','expired','cancelled');
-      CREATE TYPE IF NOT EXISTS dc_status AS ENUM ('draft','approved','gate_pass_issued','in_transit','delivered','returned');
+      CREATE TYPE inquiry_status AS ENUM ('new','quoted','won','lost','cancelled');
+      CREATE TYPE quotation_status AS ENUM ('draft','sent','accepted','rejected','revised','expired','cancelled');
+      CREATE TYPE dc_status AS ENUM ('draft','approved','gate_pass_issued','in_transit','delivered','returned');
 
       CREATE TABLE IF NOT EXISTS dispatch_challans (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -226,8 +226,8 @@ async function provisionTenantSchema(schemaName: string) {
         sort_order INTEGER DEFAULT 0
       );
 
-      CREATE TYPE IF NOT EXISTS so_status AS ENUM ('draft','pending_approval','confirmed','partially_dispatched','fully_dispatched','invoiced','closed','cancelled');
-      CREATE TYPE IF NOT EXISTS credit_check AS ENUM ('pass','fail','override');
+      CREATE TYPE so_status AS ENUM ('draft','pending_approval','confirmed','partially_dispatched','fully_dispatched','invoiced','closed','cancelled');
+      CREATE TYPE credit_check AS ENUM ('pass','fail','override');
 
       CREATE TABLE IF NOT EXISTS sales_orders (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -363,9 +363,9 @@ async function provisionTenantSchema(schemaName: string) {
         sort_order INTEGER DEFAULT 0
       );
 
-      CREATE TYPE IF NOT EXISTS invoice_status AS ENUM ('draft','posted','sent','partially_paid','fully_paid','overdue','cancelled');
-      CREATE TYPE IF NOT EXISTS invoice_type AS ENUM ('tax_invoice','simplified_invoice','credit_note','debit_note');
-      CREATE TYPE IF NOT EXISTS fbr_status AS ENUM ('pending','submitted','accepted','rejected','cancelled');
+      CREATE TYPE invoice_status AS ENUM ('draft','posted','sent','partially_paid','fully_paid','overdue','cancelled');
+      CREATE TYPE invoice_type AS ENUM ('tax_invoice','simplified_invoice','credit_note','debit_note');
+      CREATE TYPE fbr_status AS ENUM ('pending','submitted','accepted','rejected','cancelled');
 
       CREATE TABLE IF NOT EXISTS sales_invoices (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -429,7 +429,7 @@ async function provisionTenantSchema(schemaName: string) {
         created_at TIMESTAMPTZ DEFAULT now()
       );
 
-      CREATE TYPE IF NOT EXISTS receipt_status AS ENUM ('cleared','pending','bounced','cancelled');
+      CREATE TYPE receipt_status AS ENUM ('cleared','pending','bounced','cancelled');
 
       CREATE TABLE IF NOT EXISTS customer_receipts (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -461,7 +461,7 @@ async function provisionTenantSchema(schemaName: string) {
         allocated_at TIMESTAMPTZ DEFAULT now()
       );
 
-      CREATE TYPE IF NOT EXISTS pra_status AS ENUM ('draft','approved','goods_dispatched','debit_issued','closed','cancelled');
+      CREATE TYPE pra_status AS ENUM ('draft','approved','goods_dispatched','debit_issued','closed','cancelled');
 
       CREATE TABLE IF NOT EXISTS purchase_return_authorizations (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -509,7 +509,7 @@ async function provisionTenantSchema(schemaName: string) {
         ADD COLUMN IF NOT EXISTS linked_bill_id UUID,
         ADD COLUMN IF NOT EXISTS debit_application_type TEXT;
 
-      CREATE TYPE IF NOT EXISTS ra_status AS ENUM ('draft','approved','goods_received','credit_issued','closed','cancelled');
+      CREATE TYPE ra_status AS ENUM ('draft','approved','goods_received','credit_issued','closed','cancelled');
 
       CREATE TABLE IF NOT EXISTS return_authorizations (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -546,7 +546,7 @@ async function provisionTenantSchema(schemaName: string) {
         sort_order INTEGER DEFAULT 0
       );
 
-      CREATE TYPE IF NOT EXISTS return_grn_status AS ENUM ('draft','posted','cancelled');
+      CREATE TYPE return_grn_status AS ENUM ('draft','posted','cancelled');
 
       CREATE TABLE IF NOT EXISTS return_grns (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -585,7 +585,7 @@ async function provisionTenantSchema(schemaName: string) {
         ADD COLUMN IF NOT EXISTS linked_invoice_id UUID,
         ADD COLUMN IF NOT EXISTS credit_application_type TEXT;
 
-      CREATE TYPE IF NOT EXISTS pi_status AS ENUM ('draft','received','accepted','superseded','cancelled');
+      CREATE TYPE pi_status AS ENUM ('draft','received','accepted','superseded','cancelled');
 
       CREATE TABLE IF NOT EXISTS proforma_invoices (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -627,7 +627,7 @@ async function provisionTenantSchema(schemaName: string) {
         sort_order INTEGER DEFAULT 0
       );
 
-      CREATE TYPE IF NOT EXISTS ci_status AS ENUM ('received','verified','matched','discrepant','cancelled');
+      CREATE TYPE ci_status AS ENUM ('received','verified','matched','discrepant','cancelled');
 
       CREATE TABLE IF NOT EXISTS commercial_invoices (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -743,7 +743,7 @@ async function provisionTenantSchema(schemaName: string) {
         updated_at TIMESTAMPTZ DEFAULT now()
       );
 
-      CREATE TYPE IF NOT EXISTS lc_status AS ENUM (
+      CREATE TYPE lc_status AS ENUM (
         'draft','applied','opened','documents_presented',
         'under_scrutiny','accepted','retired','expired','cancelled'
       );
@@ -815,7 +815,7 @@ async function provisionTenantSchema(schemaName: string) {
         notes TEXT
       );
 
-      CREATE TYPE IF NOT EXISTS shipment_status AS ENUM (
+      CREATE TYPE shipment_status AS ENUM (
         'draft','booked','sailing','arrived','do_released','customs_cleared','grn_done','cancelled'
       );
 
@@ -883,7 +883,7 @@ async function provisionTenantSchema(schemaName: string) {
         demurrage_paid_amount NUMERIC
       );
 
-      CREATE TYPE IF NOT EXISTS grn_status AS ENUM (
+      CREATE TYPE grn_status AS ENUM (
         'draft','posted','qc_hold','qc_released','cancelled'
       );
 
@@ -948,7 +948,7 @@ async function provisionTenantSchema(schemaName: string) {
         created_at TIMESTAMPTZ DEFAULT now()
       );
 
-      CREATE TYPE IF NOT EXISTS gd_status AS ENUM (
+      CREATE TYPE gd_status AS ENUM (
         'draft','filed','green_channel','yellow_channel','red_channel',
         'query_raised','query_replied','examination_done','assessment_ordered',
         'duty_paid','cleared','cancelled'
@@ -1025,7 +1025,7 @@ async function provisionTenantSchema(schemaName: string) {
         sort_order INTEGER DEFAULT 0
       );
 
-      CREATE TYPE IF NOT EXISTS landed_cost_status AS ENUM ('draft','finalized');
+      CREATE TYPE landed_cost_status AS ENUM ('draft','finalized');
 
       CREATE TABLE IF NOT EXISTS landed_costs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1073,7 +1073,7 @@ async function provisionTenantSchema(schemaName: string) {
         updated_at TIMESTAMPTZ DEFAULT now()
       );
 
-      CREATE TYPE IF NOT EXISTS transfer_status AS ENUM ('draft','validated','done','cancelled');
+      CREATE TYPE transfer_status AS ENUM ('draft','validated','done','cancelled');
 
       CREATE TABLE IF NOT EXISTS stock_transfers (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1122,7 +1122,7 @@ async function provisionTenantSchema(schemaName: string) {
         created_at TIMESTAMPTZ DEFAULT now()
       );
 
-      CREATE TYPE IF NOT EXISTS bill_status AS ENUM ('draft','posted','partially_paid','paid','cancelled');
+      CREATE TYPE bill_status AS ENUM ('draft','posted','partially_paid','paid','cancelled');
 
       CREATE TABLE IF NOT EXISTS vendor_bills (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1169,7 +1169,7 @@ async function provisionTenantSchema(schemaName: string) {
         sort_order INTEGER DEFAULT 0
       );
 
-      CREATE TYPE IF NOT EXISTS payment_status AS ENUM ('draft','approved','paid','cancelled');
+      CREATE TYPE payment_status AS ENUM ('draft','approved','paid','cancelled');
 
       CREATE TABLE IF NOT EXISTS payments (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1196,7 +1196,7 @@ async function provisionTenantSchema(schemaName: string) {
         updated_at TIMESTAMPTZ DEFAULT now()
       );
 
-      CREATE TYPE IF NOT EXISTS je_status AS ENUM ('draft','posted','reversed');
+      CREATE TYPE je_status AS ENUM ('draft','posted','reversed');
 
       CREATE TABLE IF NOT EXISTS journal_entries (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
