@@ -46,14 +46,14 @@ export default async function DutyRegisterPage() {
     .select({
       gdId: gdLines.gdId,
       hsCode: gdLines.hsCode,
-      description: gdLines.description,
+      description: gdLines.commodityDescription,
       assessableValuePkr: gdLines.assessableValuePkr,
-      cdPkr: gdLines.cdPkr,
-      acdPkr: gdLines.acdPkr,
-      rdPkr: gdLines.rdPkr,
-      stPkr: gdLines.stPkr,
+      cdPkr: gdLines.customsDutyPkr,
+      acdPkr: gdLines.additionalCdPkr,
+      rdPkr: gdLines.regulatoryDutyPkr,
+      stPkr: gdLines.salesTaxPkr,
       whtPkr: gdLines.whtPkr,
-      itAdvPkr: gdLines.itAdvPkr,
+      itAdvPkr: gdLines.incomeTaxPkr,
       totalDutyPkr: gdLines.totalDutyPkr,
     })
     .from(gdLines);
