@@ -44,7 +44,7 @@ export function Navbar({ userName, userEmail, notificationCount = 0 }: NavbarPro
           { href: '/warehouse/stock', label: 'Stock' },
           { href: '/sales/orders', label: 'Sales' },
           { href: '/finance/bills', label: 'Finance' },
-          { href: '/reports/import', label: 'Reports' },
+          { href: '/reports', label: 'Reports' },
         ].map((item) => (
           <Link
             key={item.href}
