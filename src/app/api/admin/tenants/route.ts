@@ -177,6 +177,9 @@ async function provisionTenantSchema(schemaName: string) {
         status TEXT DEFAULT 'draft',
         justification TEXT,
         notes TEXT,
+        approved_by_id UUID,
+        approved_at TIMESTAMPTZ,
+        rejected_reason TEXT,
         created_at TIMESTAMPTZ DEFAULT now(),
         updated_at TIMESTAMPTZ DEFAULT now()
       );
@@ -191,6 +194,110 @@ async function provisionTenantSchema(schemaName: string) {
         specifications TEXT,
         origin_country TEXT,
         sort_order INTEGER DEFAULT 0
+      );
+
+      CREATE TABLE IF NOT EXISTS rfqs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        rfq_no TEXT UNIQUE NOT NULL,
+        indent_id UUID,
+        date_sent DATE,
+        valid_until DATE,
+        incoterms TEXT DEFAULT 'CIF',
+        port_of_discharge TEXT,
+        currency TEXT DEFAULT 'USD',
+        payment_terms TEXT,
+        status TEXT DEFAULT 'draft',
+        exchange_rate NUMERIC(15,4),
+        created_by_id UUID,
+        created_at TIMESTAMPTZ DEFAULT now()
+      );
+
+      CREATE TABLE IF NOT EXISTS rfq_lines (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        rfq_id UUID NOT NULL REFERENCES "${schemaName}".rfqs(id) ON DELETE CASCADE,
+        product_id UUID NOT NULL,
+        spec_grade TEXT,
+        qty NUMERIC(15,3) NOT NULL,
+        uom TEXT,
+        target_price NUMERIC(15,4),
+        sort_order INTEGER DEFAULT 0
+      );
+
+      CREATE TABLE IF NOT EXISTS rfq_suppliers (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        rfq_id UUID NOT NULL REFERENCES "${schemaName}".rfqs(id) ON DELETE CASCADE,
+        supplier_id UUID NOT NULL,
+        sent_at TIMESTAMPTZ,
+        status TEXT DEFAULT 'pending'
+      );
+
+      CREATE TABLE IF NOT EXISTS supplier_quotes (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        rfq_supplier_id UUID NOT NULL REFERENCES "${schemaName}".rfq_suppliers(id) ON DELETE CASCADE,
+        rfq_line_id UUID NOT NULL REFERENCES "${schemaName}".rfq_lines(id) ON DELETE CASCADE,
+        unit_price NUMERIC(15,4) NOT NULL,
+        currency TEXT DEFAULT 'USD',
+        validity_date DATE,
+        lead_time_days INTEGER,
+        port_of_loading TEXT,
+        special_terms TEXT,
+        is_recommended BOOLEAN DEFAULT false,
+        recommendation_note TEXT,
+        created_at TIMESTAMPTZ DEFAULT now()
+      );
+
+      CREATE TABLE IF NOT EXISTS purchase_orders (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        po_no TEXT UNIQUE NOT NULL,
+        po_date DATE NOT NULL,
+        supplier_id UUID NOT NULL,
+        indent_id UUID,
+        rfq_id UUID,
+        incoterms TEXT DEFAULT 'CIF',
+        port_of_loading TEXT,
+        port_of_discharge TEXT,
+        payment_terms TEXT DEFAULT 'lc_sight',
+        currency TEXT DEFAULT 'USD',
+        exchange_rate NUMERIC(15,4),
+        latest_ship_date DATE,
+        lc_expiry_date DATE,
+        bank_issuing_lc TEXT,
+        status TEXT DEFAULT 'draft',
+        subtotal_amount NUMERIC(18,4),
+        freight_amount NUMERIC(18,4),
+        insurance_amount NUMERIC(18,4),
+        cif_value_usd NUMERIC(18,4),
+        cif_value_pkr NUMERIC(18,2),
+        packing_instructions TEXT,
+        marking_instructions TEXT,
+        special_conditions TEXT,
+        created_by_id UUID,
+        created_at TIMESTAMPTZ DEFAULT now(),
+        updated_at TIMESTAMPTZ DEFAULT now()
+      );
+
+      CREATE TABLE IF NOT EXISTS po_lines (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        po_id UUID NOT NULL REFERENCES "${schemaName}".purchase_orders(id) ON DELETE CASCADE,
+        product_id UUID NOT NULL,
+        hs_code TEXT,
+        qty NUMERIC(15,3) NOT NULL,
+        uom TEXT,
+        unit_price NUMERIC(15,4) NOT NULL,
+        total_price NUMERIC(18,4),
+        sort_order INTEGER DEFAULT 0
+      );
+
+      CREATE TABLE IF NOT EXISTS po_amendments (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        po_id UUID NOT NULL REFERENCES "${schemaName}".purchase_orders(id) ON DELETE CASCADE,
+        amendment_no INTEGER NOT NULL,
+        field_changed TEXT NOT NULL,
+        old_value TEXT,
+        new_value TEXT,
+        reason TEXT,
+        created_by_id UUID,
+        created_at TIMESTAMPTZ DEFAULT now()
       );
 
       CREATE TYPE inquiry_status AS ENUM ('new','quoted','won','lost','cancelled');
@@ -1164,6 +1271,9 @@ async function provisionTenantSchema(schemaName: string) {
         notes TEXT,
         supplier_invoice_no TEXT,
         supplier_invoice_date DATE,
+        pra_id UUID,
+        linked_bill_id UUID,
+        debit_application_type TEXT,
         created_by_id UUID,
         created_at TIMESTAMPTZ DEFAULT now(),
         updated_at TIMESTAMPTZ DEFAULT now()
