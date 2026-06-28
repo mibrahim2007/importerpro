@@ -49,6 +49,8 @@ async function provisionTenantSchema(schemaName: string) {
         name TEXT NOT NULL,
         address TEXT,
         city TEXT,
+        gps_lat NUMERIC(10,7),
+        gps_lng NUMERIC(10,7),
         is_active BOOLEAN DEFAULT true
       );
 
@@ -73,6 +75,7 @@ async function provisionTenantSchema(schemaName: string) {
         reorder_point NUMERIC DEFAULT 0,
         min_stock NUMERIC DEFAULT 0,
         max_stock NUMERIC DEFAULT 0,
+        storage_conditions TEXT,
         is_active BOOLEAN DEFAULT true,
         created_at TIMESTAMPTZ DEFAULT now()
       );
@@ -83,9 +86,20 @@ async function provisionTenantSchema(schemaName: string) {
         name TEXT NOT NULL,
         country TEXT,
         supplier_type TEXT DEFAULT 'manufacturer',
+        address TEXT,
         email TEXT,
         phone TEXT,
+        whatsapp TEXT,
+        bank_name TEXT,
+        bank_iban TEXT,
+        bank_swift TEXT,
+        bank_currency TEXT,
         payment_terms TEXT DEFAULT 'lc_sight',
+        preferred_incoterms TEXT,
+        default_port_of_loading TEXT,
+        lead_time_days INTEGER,
+        compliance_status TEXT DEFAULT 'active',
+        customs_license_no TEXT,
         is_active BOOLEAN DEFAULT true,
         created_at TIMESTAMPTZ DEFAULT now()
       );
